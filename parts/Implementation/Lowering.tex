@@ -255,7 +255,7 @@ half dst_logical_shape[48][5][16][16] = reshape(dst)
 работают по общему приниципу: если массив данных многомерный, он преобразуется
 к одномерному. Далее массив разбивается на максимально возможные порции,
 при которых в UB помещаются входные и выходные данные. Данные загружаются из
-GM порциями, обрабатываются соответствующими векторными операции и ответ
+GM порциями, обрабатываются соответствующими векторными операциями и ответ
 выгружается. Отметим, что в силу того, что количество элементов в порции
 может быть некратным количеству элементов, обрабатываемых за итерацию инструкции
 (128 в случае \texttt{float 16} и 64 в случае \texttt{float 32} или
@@ -271,6 +271,40 @@ GM порциями, обрабатываются соответствующим
 выгружается повторно. Отметим, что такая схема не влияет на общую
 производительность, т.~к. размер <<наложения>> пренебрежимо мал по сравнению
 с размерами всего массива.
+
+Пример псевдокода для операции cast представлен ниже:
+
+\begin{lstlisting}
+half src[N];
+float dst[N];
+
+size_t n = pick_max_available(N);
+half src_local[n];
+float dst_local[n];
+
+for (i = [0, N / n))
+    copy(src + i * n, src_local, n);
+    cast_f16_f32(
+        src = src_local, dst = dst_local,
+        repeat = n / 64, mask = full_mask,
+        src_stride = 4 blocks, // 64 elems
+        dst_stride = 8 blocks // 64 elems
+    );
+    copy(dst_local, dst + i * n, n);
+
+// tail handling with overlapping
+size_t block_size = 16;
+size_t tail = (N % n + block_size - 1) / block_size * block_size;
+
+copy(src + N - tail, src_local, tail);
+cast_f16_f32(
+    src = src_local, dst = dst_local,
+    repeat = 1, mask = partial_mask,
+    src_stride = 0 blocks, // only one repeat
+    dst_stride = 0 blocks // only one repeat
+);
+copy(dst_local, dst + N - tail, tail);
+\end{lstlisting}
 
 \subsection{Транспонирование}
 
