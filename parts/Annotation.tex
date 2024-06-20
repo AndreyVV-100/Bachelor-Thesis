@@ -23,21 +23,22 @@
 
 \begin{center}
     \textbf{Abstract} \\[0.3 cm]
-    Разработка компилятора нейронных сетей на основе инфраструктуры MLIR для процессора с матричной архитектурой \\
-    \textit{Вязовцев Андрей Викторович} \\[1 cm]
+    Development of a neural network compiler based on MLIR for a processor with a matrix architecture \\
+    \textit{Vyazovtsev Andrey Victorovich} \\[1 cm]
 \end{center}
 
-Neural networks are a good and effective way to process any data.
-For this reason, they are used in various areas of life and are becoming
-increasingly popular. To increase the performance of neural networks, various
-methods are used, such as compilers and special computing devices.
-
-This paper examines various methods for optimizing neural networks and describes
-the implementation of the compiler. The goal of the work is to develop a neural
-network compiler for Ascend processors based on the DaVinci architecture using
-the LLVM MLIR infrastructure and ensure the generation of efficient machine code
-in it. In particular, individual large-block operations of neural networks and
-the process of their translation into instructions of the target architecture
-are considered.
+Modern neural networks are growing in size and require more computing resources.
+For this reason, specialized hardware, such as neural processors, and optimizing
+compilers for it are being developed. As part of the thesis, a neural network
+compiler was implemented for a processor with the DaVinci architecture. The
+compiler is developed based on the LLVM MLIR infrastructure. The paper examines
+the main features of the architecture and explores ways to use them effectively.
+The implemented compiler contains three intermediate levels of representation
+and translates the main operations of neural networks into the target set of
+instructions of the DaVinci architecture, taking into account its features, such
+as: heterogeneous memory organization, the presence of matrix and vector
+instructions. The correctness of the compiler's operation was experimentally
+studied on a synthetic set of tests, including individual large-block
+operations, as well as on a real BERT neural network containing 478 operators.
 
 \newpage
